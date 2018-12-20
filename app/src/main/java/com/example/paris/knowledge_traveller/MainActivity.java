@@ -3,7 +3,9 @@ package com.example.paris.knowledge_traveller;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -18,13 +20,18 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.facebook.AccessToken;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Base64;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,6 +51,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        printkeyhash();
+
+       if (AccessToken.getCurrentAccessToken() == null) {
+           Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(loginIntent);
+        }
+
 
         emptytxt = findViewById(R.id.txtEmpy);
         emptytxt.setVisibility(View.INVISIBLE);
@@ -53,6 +67,22 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void printkeyhash()  {
+        try {
+            PackageInfo info =getPackageManager().getPackageInfo("com.example.paris.knowledge_traveller",PackageManager.GET_SIGNATURES);
+            for(Signature signature:info.signatures){
+                MessageDigest ms = MessageDigest.getInstance("SHA");
+                ms.update(signature.toByteArray());
+                String hashKey = new String(android.util.Base64.encode(ms.digest(), 0));
+                Log.i(TAG, "printHashKey() Hash Key: " + hashKey);
+            }
+
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+    }
 
 
     public class DownloadData extends AsyncTask<String, Void, String> {
@@ -72,8 +102,6 @@ public class MainActivity extends AppCompatActivity {
             }
 
             setTheAdapter(places);
-
-
 
         }
 
