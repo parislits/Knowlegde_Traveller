@@ -1,6 +1,9 @@
 package com.example.paris.knowledge_traveller;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,58 +22,25 @@ import com.facebook.login.widget.LoginButton;
 
 import org.json.JSONObject;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 public class LoginActivity extends AppCompatActivity {
-    private static final String EMAIL = "email";
-
-
-    private CallbackManager mCallbackManager;
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        mCallbackManager.onActivityResult(requestCode, resultCode, data);
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        mCallbackManager = CallbackManager.Factory.create();
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        final boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
+        if(isLoggedIn){
+            Intent intent = new Intent(this,MainActivity.class);
+            startActivity(intent);
+        }
 
-        LoginButton mLoginButton = findViewById(R.id.login_button);
-
-        // Set the initial permissions to request from the user while logging in
-        mLoginButton.setReadPermissions(Arrays.asList(EMAIL));
-
-
-        // Register a callback to respond to the user
-        mLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                String accesstoken = loginResult.getAccessToken().getToken();
-                GraphRequest request = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
-                    @Override
-                    public void onCompleted(JSONObject object, GraphResponse response) {
-
-                    }
-                });
-            }
-
-            @Override
-            public void onCancel() {
-                setResult(RESULT_CANCELED);
-                Log.d("MyFb", "onCancel: abcd");
-                
-                finish();
-            }
-
-            @Override
-            public void onError(FacebookException e) {
-                // Handle exception
-            }
-        });
     }
+
+
 
 }

@@ -31,7 +31,7 @@ public class JSONParserWiki {
 
             final String WIKI_EXTRACT = "extract";
             final String IMAGE = "images";
-            final String ImageTitle = "title";
+            final String Title = "title";
 
 
 
@@ -50,16 +50,21 @@ public class JSONParserWiki {
             JSONObject wiki_id = wiki_Page.getJSONObject(PAGE_ID);
             //Getting the text from json
             String wikiText = wiki_id.getString(WIKI_EXTRACT);
-            //Getting an Image from json
+            //Getting title
+            String wikiTitle = wiki_id.getString(Title);
+            // Getting an Image from json
             JSONArray wikiImages = wiki_id.getJSONArray(IMAGE);
             JSONObject Image =wikiImages.getJSONObject(0);
-            String wImage=Image.getString(ImageTitle);
+            String wImage=Image.getString(Title);
             wImage = wImage.replaceAll("\\s","_");
+            wikiTitle = wikiTitle.replaceAll("\\s","_");
 
             Wiki w = new Wiki();
+            w.setTitle(wikiTitle);
             w.setWikiText(wikiText);
             w.setImgUrl(wImage);
             wiki.add(w);
+            Log.d(TAG, "parse: " + w.getImgUrl() +"  " + w.getTitle());
 
 
 
@@ -71,6 +76,12 @@ public class JSONParserWiki {
             wiki.add(empty);
             return true;
         }
+        return true;
+    }
+
+    public boolean parseImage(String JsonData){
+
+
         return true;
     }
 

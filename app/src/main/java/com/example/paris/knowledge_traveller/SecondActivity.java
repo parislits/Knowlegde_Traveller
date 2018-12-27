@@ -10,6 +10,8 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.AccessToken;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,21 +26,34 @@ public class SecondActivity extends AppCompatActivity {
     private static final String TAG = "MyGps";
     private TextView wikiTxt ,wikiTxtLink;
     private  String monument_Name;
-
+    private ImageView imageView;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
+
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        final boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
+        if(!isLoggedIn){
+            Intent intent = new Intent(this,LoginActivity.class);
+            startActivity(intent);
+        }
+
+
+
         wikiTxt = findViewById(R.id.txtwiki);
         wikiTxtLink = findViewById(R.id.txtWikiLink);
+        imageView = findViewById(R.id.imageview);
+
 
         Intent intent = getIntent();
         monument_Name = intent.getStringExtra("name");
 
         DownloadWikiData downloadWikiData = new DownloadWikiData();
         downloadWikiData.execute("https://en.wikipedia.org//w/api.php?action=query&format=json&prop=extracts%7Cimages&indexpageids=1&titles="+monument_Name+"&redirects=1&utf8=1&exintro=1&explaintext=1");
+
 
 
 
