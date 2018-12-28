@@ -48,6 +48,12 @@ public class PlacesAdapter  extends ArrayAdapter<Places> {
 
         Places place = places.get(position);
         viewHolder.placeName.setText(place.getName() + "");
+        if(place.getWiki()!=""){
+            viewHolder.placeWiki.setText("www.wikipedia.org/wiki/"+ place.getWiki() + "");
+        }
+        else{
+            viewHolder.placeWiki.setText("There is no a wikipedia page" + "");
+        }
 
 
         return convertView;
@@ -55,9 +61,11 @@ public class PlacesAdapter  extends ArrayAdapter<Places> {
 
     private class ViewHolder {
         final TextView placeName;
+        final TextView placeWiki;
 
         ViewHolder(View view){
             placeName = view.findViewById(R.id.txtPlaceName);
+            placeWiki = view.findViewById(R.id.txtWiki);
 
         }
     }

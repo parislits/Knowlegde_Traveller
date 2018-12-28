@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,6 +28,8 @@ public class SecondActivity extends AppCompatActivity {
     private TextView wikiTxt ,wikiTxtLink;
     private  String monument_Name;
     private ImageView imageView;
+    private TextView wikiTxtLink2;
+    private String monument_Wiki;
 
 
     @Override
@@ -45,48 +48,19 @@ public class SecondActivity extends AppCompatActivity {
 
         wikiTxt = findViewById(R.id.txtwiki);
         wikiTxtLink = findViewById(R.id.txtWikiLink);
-        imageView = findViewById(R.id.imageview);
+        wikiTxtLink2 = findViewById(R.id.txtWikiLink2);
 
 
         Intent intent = getIntent();
         monument_Name = intent.getStringExtra("name");
+        monument_Wiki = intent.getStringExtra("wiki");
 
         DownloadWikiData downloadWikiData = new DownloadWikiData();
         downloadWikiData.execute("https://en.wikipedia.org//w/api.php?action=query&format=json&prop=extracts%7Cimages&indexpageids=1&titles="+monument_Name+"&redirects=1&utf8=1&exintro=1&explaintext=1");
 
 
-
-
-
     }
 
-
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        ImageView bmImage;
-
-        public DownloadImageTask(ImageView bmImage) {
-            this.bmImage = bmImage;
-        }
-
-        @Override
-        protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
-            return mIcon11;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
-        }
-
-    }
 
 
 
@@ -106,6 +80,12 @@ public class SecondActivity extends AppCompatActivity {
                 Log.d(TAG, "-------------------------------");
                 wikiTxt.setText(wikiText.get(0).getWikiText());
                 wikiTxtLink.setText("https://en.wikipedia.org/wiki/" + monument_Name);
+                if(monument_Wiki!=""){
+                wikiTxtLink2.setText("https://wikipedia.org/wiki/"+monument_Wiki);
+                }
+                else{
+                    wikiTxtLink2.setVisibility(View.GONE);
+                }
                 // new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).
                 //  execute("http://java.sogeti.nl/JavaBlog/wp-content/uploads/2009/04/android_icon_256.png");
 

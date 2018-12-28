@@ -18,9 +18,12 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.facebook.AccessToken;
+
+import org.json.JSONException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -44,9 +47,8 @@ public class MainActivity extends AppCompatActivity {
 
     private LocationManager mLocationManager;
     private LocationListener mLocationListener;
-
-
-
+    private boolean isGPSEnabled;
+    private boolean isNetworkEnabled;
 
 
     @Override
@@ -61,8 +63,17 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
 
+        double southbbox=40.63157;
+        double westbbox = 22.95026;
+        double northbbox = 40.63273;
+        double eastbbox = 22.95298;
+        DownloadData downloadData = new DownloadData();
+        downloadData.execute("https://www.overpass-api.de/api/interpreter?data=[out:json][timeout:25];(node['historic'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + ");way['historic'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + ");relation['historic'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + "););out;%3E;out%20skel%20qt;");
 
-        getGpsLocation();
+
+
+        //for real gps
+        // getGpsLocation();
         emptytxt = findViewById(R.id.txtEmpy);
         emptytxt.setVisibility(View.GONE);
 
@@ -83,7 +94,13 @@ public class MainActivity extends AppCompatActivity {
             progressBar.setVisibility(View.GONE);
 
             JSONParserMap parserMap = new JSONParserMap();
-            parserMap.parse(jsonData);
+
+            try {
+                parserMap.parse(jsonData);
+            } catch (JSONException e) {
+                Log.d(TAG, "onPostExecute: Error4");
+            }
+
 
             places = parserMap.getPosts();
 
@@ -148,11 +165,13 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Places currentplace =places.get(position);
                 String monument_Name = currentplace.getName();
+                String Wiki = currentplace.getWiki();
                 monument_Name=monument_Name.replaceAll("\\s","_");
 
                 Log.d(TAG, "Current Name : " + monument_Name);
                 Intent intent = new Intent(MainActivity.this, SecondActivity.class);
                 intent.putExtra("name",monument_Name);
+                intent.putExtra("wiki" , Wiki);
 
 
                 startActivity(intent);
@@ -206,10 +225,10 @@ public class MainActivity extends AppCompatActivity {
                 double northbbox = Double.parseDouble(latbbox) + 0.0006;
                 double eastbbox = Double.parseDouble(longbbox) + 0.0014;
 
-                 southbbox=40.63157;
-                 westbbox = 22.95026;
-                 northbbox = 40.63273;
-                 eastbbox = 22.95298;
+                // southbbox=40.63157;
+               //  westbbox = 22.95026;
+                // northbbox = 40.63273;
+                // eastbbox = 22.95298;
 
               //  southbbox=40.63633-0.0006;
                // westbbox = 22.94324 - 0.0014;
@@ -253,11 +272,27 @@ public class MainActivity extends AppCompatActivity {
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-            ActivityCompat.requestPermissions(this,new String[] {Manifest.permission.ACCESS_FINE_LOCATION} ,REQUEST_CODE);
+            ActivityCompat.requestPermissions(this,new String[] {Manifest.permission.ACCESS_FINE_LOCATION , Manifest.permission.ACCESS_COARSE_LOCATION} ,REQUEST_CODE);
 
             return;
         }
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, mLocationListener);
+
+        isGPSEnabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        isNetworkEnabled = mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+        if(isGPSEnabled || isNetworkEnabled) {
+            if (isNetworkEnabled) {
+                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 10, mLocationListener);
+            }
+
+            if (isGPSEnabled) {
+                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, mLocationListener);
+            }
+        }
+        else{
+            Toast toast = Toast.makeText(this ,"You Need to activate GPS" , Toast.LENGTH_LONG);
+        }
 
 
     }

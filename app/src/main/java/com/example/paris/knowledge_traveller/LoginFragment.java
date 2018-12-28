@@ -53,34 +53,8 @@ public class LoginFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mCallbackManager = CallbackManager.Factory.create();
 
-
-        AccessToken accessToken = AccessToken.getCurrentAccessToken();
-        boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
-        if (!isLoggedIn) {
-            LoginManager.getInstance().registerCallback(mCallbackManager,
-                    new FacebookCallback<LoginResult>() {
-                        @Override
-                        public void onSuccess(LoginResult loginResult) {
-                            Log.d("FB_LOGIN", "onSuccess: sinde8ike ");
-                            Intent intent = new Intent(getActivity(),MainActivity.class);
-                            startActivity(intent);
-
-                        }
-
-                        @Override
-                        public void onCancel() {
-                            // App code
-                        }
-
-                        @Override
-                        public void onError(FacebookException exception) {
-                            // App code
-                        }
-                    });
-
-
-        }
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -99,15 +73,19 @@ public class LoginFragment extends Fragment {
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         final boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
 
-            mLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+
+        mLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
                 @Override
                 public void onSuccess(LoginResult loginResult) {
                     // App code
+
                     Log.d("FB_LOGIN", "onSuccess: sinde8ike stin onview ");
+
                     Intent intent = new Intent(getActivity(),MainActivity.class);
                     startActivity(intent);
 
                 }
+
 
                 @Override
                 public void onCancel() {
