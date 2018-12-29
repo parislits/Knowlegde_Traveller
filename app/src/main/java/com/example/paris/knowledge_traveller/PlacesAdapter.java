@@ -13,8 +13,6 @@ import java.util.List;
 
 public class PlacesAdapter  extends ArrayAdapter<Places> {
 
-    private static final String TAG = "PostAdapter";
-
     private final LayoutInflater inflater;
     private final int layoutResource;
     private List<Places> places;
@@ -47,12 +45,12 @@ public class PlacesAdapter  extends ArrayAdapter<Places> {
 
 
         Places place = places.get(position);
-        viewHolder.placeName.setText(place.getName() + "");
+        viewHolder.placeName.setText(place.getName() + ""); //Προσθετουμε Το ονομα του μνημειου
         if(place.getWiki()!=""){
-            viewHolder.placeWiki.setText("www.wikipedia.org/wiki/"+ place.getWiki() + "");
+            viewHolder.placeWiki.setText("www.wikipedia.org/wiki/"+ place.getWiki() + ""); //Προσθετουμε την wikipedia του μνημειου που μας δινεται απο το OSM αν υπαρχει
         }
         else{
-            viewHolder.placeWiki.setText("There is no a wikipedia page" + "");
+            viewHolder.placeWiki.setText("There is no a wikipedia page" + ""); //αλλιως οτι δεν εχει
         }
 
 

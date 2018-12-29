@@ -12,10 +12,9 @@ import java.util.ArrayList;
 
 public class JSONParserMap {
 
-    private static final String TAG = "JSONParser";
-    private String Wiki ="" ;
+    private static final String TAG = "JSONParserMap";
+    private String Wiki ="";
     String Name;
-    private int i;
 
     private ArrayList<Places> places;
 
@@ -27,7 +26,7 @@ public class JSONParserMap {
         return places;
     }
 
-    public boolean parse(String jsonData) throws JSONException {
+    public boolean parse(String jsonData) {
         try {
 
             final String OM_ELEMENT = "elements";
@@ -35,29 +34,33 @@ public class JSONParserMap {
             final String NAME = "name:en";
             final String wiki = "wikipedia";
             final String other_Name = "name";
-
+            //Ανοιγουμε το Json με βαση τα ονοματα που εχει
 
             JSONObject Json = new JSONObject(jsonData);
             JSONArray PArray = Json.getJSONArray(OM_ELEMENT);
 
-            for(i=0; i<PArray.length(); i++) {
+            for(int i=0; i<PArray.length(); i++) {
                 JSONObject AllPlaces = PArray.getJSONObject(i);
 
                 JSONObject Place = AllPlaces.getJSONObject(OM_TAG);
+               /*Σε πολλα ελληνικα μικρα μνημεια αλλα και σε αγγλικα μνημεια δεν υπαρχει το tag "name:en" αλλα απλα name
+               Σε αυτες τις περιπτωσεις θα βγαλει error οποτε το πιανουμε πανω για να μην βγει απο την for*/
                 try {
                     Name = Place.getString(NAME);
                 }
                 catch (JSONException e){
                     Name = Place.getString(other_Name);
                 }
-
+                /* Το ιδιο ισχυει και για το πεδιο wiki
+                Τα μικρα μνημεια δεν εχουν σελιδα στην wikipedia*/
                 try{
                  Wiki = Place.getString(wiki);
-                    Wiki = Wiki.replaceAll("\\s","_");
+                    Wiki = Wiki.replaceAll("\\s","_"); /*Αν εχουν σελιδα για να την περασουμε σε link για να μπορουν να την ανοιγουν
+                     Θα πρεπει να αφαιρεσουμε τα κενα και να βαλουμε _ */
                 }
                 catch (JSONException e){
                     Log.d(TAG, "parse: There is no wikidata");
-                    Wiki = "There is no wikidata" ;
+                    Wiki ="";
 
                 }
 
@@ -71,41 +74,9 @@ public class JSONParserMap {
 
         }
         catch (JSONException e){
-            Log.d(TAG, "parse: error0");
+            Log.d(TAG, "parse: error");
         }
-                /*
-                catch (ClassCastException e){
-                    Log.d(TAG, "parse: Error1");
 
-                }
-                catch (NullPointerException e){
-                    Log.d("MyGps", "parse: Error2");
-
-                } catch (JSONException e) {
-                    Log.d("MyGps", "parse: Error3");
-                    //In English or small historical monuments api doesnt give name:en
-                    final String OM_ELEMENT = "elements";
-                    final String OM_TAG = "tags";
-                    final String other_Name = "name";
-
-
-                    JSONObject Json = new JSONObject(jsonData);
-                    JSONArray PArray = Json.getJSONArray(OM_ELEMENT);
-
-                    while(i<PArray.length()) {
-                        JSONObject AllPlaces = PArray.getJSONObject(i);
-
-                        JSONObject Place = AllPlaces.getJSONObject(OM_TAG);
-                        String Name = Place.getString(other_Name);
-
-
-                        Places p = new Places();
-                        p.setName(Name);
-                        places.add(p);
-                        i++;
-                    }
-                }
-        */
         return true;
     }
 }

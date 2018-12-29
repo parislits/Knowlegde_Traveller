@@ -45,7 +45,6 @@ public class LoginFragment extends Fragment {
 
         super.onActivityResult(requestCode, resultCode, data);
 
-
     }
 
     @Override
@@ -67,8 +66,10 @@ public class LoginFragment extends Fragment {
         LoginButton mLoginButton = view.findViewById(R.id.login_button);
 
         // Set the initial permissions to request from the user while logging in
+        //αλλα δεν το χρησιμοποιουμαι καπου
         mLoginButton.setReadPermissions(Arrays.asList(EMAIL));
-        mLoginButton.setFragment(this);
+
+        mLoginButton.setFragment(this); //Χρειαζεται για να βαλουμε το κουμπί της συνδεσης σε fragment
 
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         final boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
@@ -77,7 +78,7 @@ public class LoginFragment extends Fragment {
         mLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
                 @Override
                 public void onSuccess(LoginResult loginResult) {
-                    // App code
+                    // Ο χρηστης εχει συνδεθει επιτυχως
 
                     Log.d("FB_LOGIN", "onSuccess: sinde8ike stin onview ");
 
@@ -89,12 +90,12 @@ public class LoginFragment extends Fragment {
 
                 @Override
                 public void onCancel() {
-                    // App code
+                    // Ο χρηστης ακυρωσε την εισοδο του
                 }
 
                 @Override
                 public void onError(FacebookException exception) {
-                    // App code
+                    // Παρουσιαστηκε καποιο σφαλμα
                 }
             });
 

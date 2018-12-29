@@ -23,8 +23,6 @@ import android.widget.Toast;
 
 import com.facebook.AccessToken;
 
-import org.json.JSONException;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -36,7 +34,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
 
-    private static final String TAG = "MyGps";
+    private static final String TAG = "MainActivity";
     private final int REQUEST_CODE =123;
     private ArrayList<Places> places;
 
@@ -55,18 +53,24 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+//Επειδη το κουμπι της συνδεσης στο facebook ειναι σε ολα τα activities ελεγχουμε μηπως εχει αποσυνδεθει σε καποιο προηγουμενο activity
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         final boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
         if(!isLoggedIn){
+            //και τον στελνουμε πισω στην αρχικη οθόνη
             Intent intent = new Intent(this,LoginActivity.class);
             startActivity(intent);
         }
-
+        //Ψεύτικα δεδομενα γιατί το gps στην συσκευη μου αργει να ανταποκριθει
         double southbbox=40.63157;
         double westbbox = 22.95026;
         double northbbox = 40.63273;
         double eastbbox = 22.95298;
+
+        //  southbbox=40.63633-0.0006;
+        // westbbox = 22.94324 - 0.0014;
+        // northbbox = 40.63633 + 0.0006;
+        // eastbbox = 22.94324 + 0.0014;
         DownloadData downloadData = new DownloadData();
         downloadData.execute("https://www.overpass-api.de/api/interpreter?data=[out:json][timeout:25];(node['historic'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + ");way['historic'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + ");relation['historic'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + "););out;%3E;out%20skel%20qt;");
 
@@ -74,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
         //for real gps
         // getGpsLocation();
+
         emptytxt = findViewById(R.id.txtEmpy);
         emptytxt.setVisibility(View.GONE);
 
@@ -87,19 +92,16 @@ public class MainActivity extends AppCompatActivity {
 
         protected void onPostExecute(String jsonData) {
             super.onPostExecute(jsonData);
-
+            //Προσθετουμε ενα progressbar γιατι πολλες φορες τα δεδομενα του gps αργουν να ερθουν
             waittxt =findViewById(R.id.txtWait);
             progressBar = findViewById(R.id.progressBar);
+            //Τα εξαφανιζουμε μολις τα δεδομενα φτασουν στην onPost
             waittxt.setVisibility(View.GONE);
             progressBar.setVisibility(View.GONE);
 
             JSONParserMap parserMap = new JSONParserMap();
 
-            try {
                 parserMap.parse(jsonData);
-            } catch (JSONException e) {
-                Log.d(TAG, "onPostExecute: Error4");
-            }
 
 
             places = parserMap.getPosts();
@@ -157,26 +159,27 @@ public class MainActivity extends AppCompatActivity {
         PlacesAdapter placeAdapter = new PlacesAdapter(MainActivity.this, R.layout.places_list, places);
 
         placesListView.setAdapter(placeAdapter);
+        //Αν δεν εχουμε δεδομενα μεσα στην λιστα places τοτε εμφανιζουμε ενα TextView που του λεει οτι δεν υπαρχουν δεδομενα
         if(places.size()==0){
             emptytxt.setVisibility(View.VISIBLE);
         }
+        //Βαζουμε στην listView μας κουμπι για καθε μνημειο
         placesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Places currentplace =places.get(position);
                 String monument_Name = currentplace.getName();
                 String Wiki = currentplace.getWiki();
-                monument_Name=monument_Name.replaceAll("\\s","_");
+                monument_Name=monument_Name.replaceAll("\\s","_"); // Το μνημειο εχει στο ονομα του κενα
+                //Για να φωναξουμε το api της wikipedia πρεπει να ειναι σε μορφη A_B_C και οχι A B C
 
-                Log.d(TAG, "Current Name : " + monument_Name);
+                Log.d(TAG, "Name : " + monument_Name);
                 Intent intent = new Intent(MainActivity.this, SecondActivity.class);
-                intent.putExtra("name",monument_Name);
+                intent.putExtra("name",monument_Name); //Περναμε στην SecondActivity το ονομα του μνημειου καιτην σελιδα της wikipedia
+                Log.d(TAG, "Wiki : " + Wiki);
                 intent.putExtra("wiki" , Wiki);
 
-
                 startActivity(intent);
-
-
             }
         });
     }
@@ -188,6 +191,7 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode==REQUEST_CODE){
             if(grantResults.length >0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 Log.d("MyGPS", "onRequestPermissionsResult: Permission Granded");
+                //οταν μας δοθούν δικαιωματα καλουμε την συναρτηση για να παρουμε την τοποθεσια του χρηστη
                 getGpsLocation();
             }
             else{
@@ -205,12 +209,14 @@ public class MainActivity extends AppCompatActivity {
             public void onLocationChanged(Location location) {
 
                 Log.d("MyGPS", "onLocationChanged: Location");
-
+                //Δεχομαστε το longitude και latitude απο το gps
                 String longitude= String.valueOf(location.getLongitude());
                 String latitude= String.valueOf(location.getLatitude());
                 String latbbox;
                 String longbbox;
 
+                //Το api του OpenStreetMap δεχεται Longitude και latitude με 5 δεκαδικα ψηφια (π.χ 62.12345 ) ενω το κινητο μας δινει με 8 ψηφια στο τελος
+                //Πολλες φορες το gps μου εδωσε πισω 7 ψηφια γιαυτο εκτελουμε τον παρακατω κωδικα για πιθανον λαθη
                 if(longitude.length()==8 && latitude.length()==8){
                     latbbox = latitude.substring(0,latitude.length()-3);
                     longbbox = longitude.substring(0,longitude.length()-3);
@@ -219,7 +225,7 @@ public class MainActivity extends AppCompatActivity {
                     latbbox = latitude.substring(0,latitude.length()-2);
                     longbbox = longitude.substring(0,longitude.length()-2);
                 }
-
+                //Το api του OSM για να λειτουργησει χρειαζεται το λεγομενο bbox το οποιο ειναι 4 συντεταγμενες που δημιουργουν ενα τετραγωνο στον χαρτη
                 double southbbox = Double.parseDouble(latbbox) - 0.0006;
                 double westbbox = Double.parseDouble(longbbox) - 0.0014;
                 double northbbox = Double.parseDouble(latbbox) + 0.0006;
@@ -235,10 +241,10 @@ public class MainActivity extends AppCompatActivity {
                // northbbox = 40.63633 + 0.0006;
                // eastbbox = 22.94324 + 0.0014;
 
-                Log.d("My", "onLocationChanged: "+ latbbox +" "+longbbox);
-                Log.d("MyGps", "onLocationChanged: " +southbbox + " " +westbbox + " " +northbbox+ " " +eastbbox );
+                Log.d("MyGPS", "onLocationChanged: "+ latbbox +" "+longbbox);
+                Log.d("MyGPS", "onLocationChanged: " +southbbox + " " +westbbox + " " +northbbox+ " " +eastbbox );
 
-
+                //Εκτελουμε την ασυγχρονη μεθοδο που θα μας επιστρεψει το Json με τα μνημεια της περιοχης του bbox
                 DownloadData downloadData = new DownloadData();
                 downloadData.execute("https://www.overpass-api.de/api/interpreter?data=[out:json][timeout:25];(node['historic'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + ");way['historic'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + ");relation['historic'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + "););out;%3E;out%20skel%20qt;");
 
@@ -276,6 +282,7 @@ public class MainActivity extends AppCompatActivity {
 
             return;
         }
+        //Ελεγχουμαι εαν Το gps ή το Internet ειναι ανοιχτο
 
         isGPSEnabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
@@ -289,9 +296,12 @@ public class MainActivity extends AppCompatActivity {
             if (isGPSEnabled) {
                 mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, mLocationListener);
             }
+            //Αν ειναι ανοιχτα και τα δυο ζηταμε ταυτοχρονα και στα δυο να μας στειλεουν τα δεδομενα(για πιο γρηγορα αποτελεσματα)
         }
         else{
+            //Αν εχει κλειστο και το ιντερνετ και το gps τοτε του ζηταμε να τα ανοιξει
             Toast toast = Toast.makeText(this ,"You Need to activate GPS" , Toast.LENGTH_LONG);
+            toast.show();
         }
 
 

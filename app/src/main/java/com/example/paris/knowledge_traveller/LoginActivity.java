@@ -32,8 +32,10 @@ public class LoginActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        //Ελεγχος για να δουμε αν ειναι συνδεδεμενος ηδη ο χρηστης απο προηγουμενη εισοδο στην εφαρμογη
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         final boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
+        //Αν ειναι ,τοτε να συνδεθει απευθειας στην mainActivity
         if(isLoggedIn){
             Intent intent = new Intent(this,MainActivity.class);
             startActivity(intent);

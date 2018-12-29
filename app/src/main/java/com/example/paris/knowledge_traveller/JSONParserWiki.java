@@ -9,7 +9,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class JSONParserWiki {
-    private static final String TAG = "JSONParser";
+    private static final String TAG = "JSONParserWiki";
     private ArrayList<Wiki> wiki;
 
     public JSONParserWiki(){
@@ -79,11 +79,6 @@ public class JSONParserWiki {
         return true;
     }
 
-    public boolean parseImage(String JsonData){
-
-
-        return true;
-    }
 
 
 }

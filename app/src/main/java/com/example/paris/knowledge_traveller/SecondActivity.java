@@ -24,7 +24,7 @@ import java.util.ArrayList;
 
 public class SecondActivity extends AppCompatActivity {
     private ArrayList<Wiki> wikiText;
-    private static final String TAG = "MyGps";
+    private static final String TAG = "SecondActivity";
     private TextView wikiTxt ,wikiTxtLink;
     private  String monument_Name;
     private ImageView imageView;
@@ -36,10 +36,11 @@ public class SecondActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
-
+        //Επειδη το κουμπι της συνδεσης στο facebook ειναι σε ολα τα activities ελεγχουμε μηπως εχει αποσυνδεθει σε καποιο προηγουμενο activity
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         final boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
         if(!isLoggedIn){
+            //και τον στελνουμε πισω στην αρχικη οθόνη
             Intent intent = new Intent(this,LoginActivity.class);
             startActivity(intent);
         }
@@ -54,15 +55,14 @@ public class SecondActivity extends AppCompatActivity {
         Intent intent = getIntent();
         monument_Name = intent.getStringExtra("name");
         monument_Wiki = intent.getStringExtra("wiki");
+        Log.d("WHAT", "onCreate: "+ monument_Wiki);
+        //Δεχομαστε απο τα προηγουμενα Activities το ονομα του μνημειου και την σελιδα της wikipedia Που μας δινει το OSM
 
+        //Κανουμε αναζητηση στη wikipedia με βαση το ονομα του μνημειου και παιρνουμε μονο την περιγραφη της wikipedia
         DownloadWikiData downloadWikiData = new DownloadWikiData();
         downloadWikiData.execute("https://en.wikipedia.org//w/api.php?action=query&format=json&prop=extracts%7Cimages&indexpageids=1&titles="+monument_Name+"&redirects=1&utf8=1&exintro=1&explaintext=1");
 
-
     }
-
-
-
 
     public class DownloadWikiData extends AsyncTask<String, Void, String> {
 
@@ -74,18 +74,20 @@ public class SecondActivity extends AppCompatActivity {
             JSONParserWiki parserWiki =new JSONParserWiki();
             parserWiki.parse(jsonData);
             wikiText = parserWiki.getWiki();
-
+            //Αν δεν
             if(!(wikiText.get(0).getWikiText()=="")) {
                 Log.d(TAG, wikiText.get(0).toString());
                 Log.d(TAG, "-------------------------------");
                 wikiTxt.setText(wikiText.get(0).getWikiText());
-                wikiTxtLink.setText("https://en.wikipedia.org/wiki/" + monument_Name);
-                if(monument_Wiki!=""){
-                wikiTxtLink2.setText("https://wikipedia.org/wiki/"+monument_Wiki);
+                wikiTxtLink.setText("https://en.wikipedia.org/wiki/" + monument_Name); //αν υπαρχει η σελιδα αναζητησης απο την wikipedia την εμφανιζουμε
+
+                if(!monument_Wiki.isEmpty()){
+                wikiTxtLink2.setText("https://wikipedia.org/wiki/"+monument_Wiki);  //Αν υπαρχει η Σελιδα wikipedia απο το OSM την εμφανιζουμε και αυτη
+                //Βαζουμε και τις δυο σελιδες γιατι η 2η μπορει να μην ειναι στα αγγλικα αλλα σε καποια αλλη γλωσσα
                 }
                 else{
-                    wikiTxtLink2.setVisibility(View.GONE);
-                }
+                     wikiTxtLink2.setVisibility(View.GONE);
+                     }
                 // new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).
                 //  execute("http://java.sogeti.nl/JavaBlog/wp-content/uploads/2009/04/android_icon_256.png");
 
@@ -94,8 +96,17 @@ public class SecondActivity extends AppCompatActivity {
 
             }
             else{
-                wikiTxt.setText("Cant find info for " + monument_Name);
-                wikiTxtLink.setText("Please search on https://en.wikipedia.org/");
+                //Αν δεν υπαχρει η wiki στα αγγλικα αλλα υπαρχει σε αλλη γλωσσα
+                if(!monument_Wiki.isEmpty()){
+                    wikiTxtLink2.setText("https://wikipedia.org/wiki/"+monument_Wiki);
+                    wikiTxtLink.setVisibility(View.GONE);
+                }
+                else {
+                    //Δεν υπαρχουν καθολου δεδομενα για το μνημειο
+                    wikiTxtLink2.setVisibility(View.GONE);
+                    wikiTxt.setText("Cant find info for " + monument_Name);
+                    wikiTxtLink.setText("Please search on https://en.wikipedia.org/ or https://google.com ");
+                }
             }
 
 
