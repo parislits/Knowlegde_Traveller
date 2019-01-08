@@ -15,13 +15,16 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import com.facebook.AccessToken;
+
+import org.greenrobot.greendao.database.Database;
+import org.greenrobot.greendao.query.Query;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -47,12 +50,14 @@ public class MainActivity extends AppCompatActivity {
     private LocationListener mLocationListener;
     private boolean isGPSEnabled;
     private boolean isNetworkEnabled;
+    private Button btnvisited;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 //Επειδη το κουμπι της συνδεσης στο facebook ειναι σε ολα τα activities ελεγχουμε μηπως εχει αποσυνδεθει σε καποιο προηγουμενο activity
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         final boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
@@ -76,8 +81,19 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+        btnvisited =findViewById(R.id.view_db);
+        btnvisited.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this , VisitedActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
         //for real gps
         // getGpsLocation();
+
 
         emptytxt = findViewById(R.id.txtEmpy);
         emptytxt.setVisibility(View.GONE);

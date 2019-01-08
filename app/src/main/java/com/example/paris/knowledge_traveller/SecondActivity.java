@@ -1,26 +1,28 @@
 package com.example.paris.knowledge_traveller;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.AccessToken;
 
+import org.greenrobot.greendao.database.Database;
+import org.greenrobot.greendao.query.Query;
+
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 public class SecondActivity extends AppCompatActivity {
     private ArrayList<Wiki> wikiText;
@@ -30,6 +32,12 @@ public class SecondActivity extends AppCompatActivity {
     private ImageView imageView;
     private TextView wikiTxtLink2;
     private String monument_Wiki;
+    private PlacesDao placesDao;
+    private Query<Places> placesQuery;
+    private Button addPlace;
+
+
+
 
 
     @Override
@@ -45,7 +53,13 @@ public class SecondActivity extends AppCompatActivity {
             startActivity(intent);
         }
 
+        DaoSession daoSession =((GreenDao)getApplication()).getDaoSession();
 
+        placesDao =daoSession.getPlacesDao();
+        placesQuery = placesDao.queryBuilder().orderAsc(PlacesDao.Properties.Name).build();
+
+
+        addPlace = findViewById(R.id.addbtn);
 
         wikiTxt = findViewById(R.id.txtwiki);
         wikiTxtLink = findViewById(R.id.txtWikiLink);
@@ -58,11 +72,24 @@ public class SecondActivity extends AppCompatActivity {
         Log.d("WHAT", "onCreate: "+ monument_Wiki);
         //Δεχομαστε απο τα προηγουμενα Activities το ονομα του μνημειου και την σελιδα της wikipedia Που μας δινει το OSM
 
+        addPlace.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Places p = new Places();
+                p.setName(monument_Name);
+                p.setWiki(monument_Wiki);
+                placesDao.insert(p);
+            }
+        });
         //Κανουμε αναζητηση στη wikipedia με βαση το ονομα του μνημειου και παιρνουμε μονο την περιγραφη της wikipedia
         DownloadWikiData downloadWikiData = new DownloadWikiData();
         downloadWikiData.execute("https://en.wikipedia.org//w/api.php?action=query&format=json&prop=extracts%7Cimages&indexpageids=1&titles="+monument_Name+"&redirects=1&utf8=1&exintro=1&explaintext=1");
 
+
+
     }
+
+
 
     public class DownloadWikiData extends AsyncTask<String, Void, String> {
 
