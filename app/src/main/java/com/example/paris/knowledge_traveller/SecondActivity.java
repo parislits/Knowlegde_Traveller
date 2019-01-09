@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 
@@ -29,7 +30,6 @@ public class SecondActivity extends AppCompatActivity {
     private static final String TAG = "SecondActivity";
     private TextView wikiTxt ,wikiTxtLink;
     private  String monument_Name;
-    private ImageView imageView;
     private TextView wikiTxtLink2;
     private String monument_Wiki;
     private PlacesDao placesDao;
@@ -57,7 +57,7 @@ public class SecondActivity extends AppCompatActivity {
 
         placesDao =daoSession.getPlacesDao();
         placesQuery = placesDao.queryBuilder().orderAsc(PlacesDao.Properties.Name).build();
-
+        final List<Places> places = placesQuery.list();
 
         addPlace = findViewById(R.id.addbtn);
 
@@ -78,13 +78,30 @@ public class SecondActivity extends AppCompatActivity {
                 Places p = new Places();
                 p.setName(monument_Name);
                 p.setWiki(monument_Wiki);
-                placesDao.insert(p);
+                boolean flag=true;
+                //Αν υπαρχει ηδη μεσα στην βάση μην το ξαναπροσθεσεις
+                for(int i=0 ;i<places.size();i++) {
+                    Log.d("AAA", "onClick: "+ places.get(i).getName() +" "+ p.getName());
+                    if (places.get(i).getName().equals(p.getName())){
+                        flag=false;
+                    }
+                }
+
+                    if(flag) {
+                        placesDao.insert(p);
+                    }
+                    else{
+                        Log.d("AAA", "onClick: Dystuxos uparxei");
+                        Toast toast;
+                        toast = Toast.makeText(SecondActivity.this ,"This Monument is already added !" , Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+
             }
         });
         //Κανουμε αναζητηση στη wikipedia με βαση το ονομα του μνημειου και παιρνουμε μονο την περιγραφη της wikipedia
         DownloadWikiData downloadWikiData = new DownloadWikiData();
         downloadWikiData.execute("https://en.wikipedia.org//w/api.php?action=query&format=json&prop=extracts%7Cimages&indexpageids=1&titles="+monument_Name+"&redirects=1&utf8=1&exintro=1&explaintext=1");
-
 
 
     }

@@ -33,6 +33,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -51,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
     private boolean isGPSEnabled;
     private boolean isNetworkEnabled;
     private Button btnvisited;
+    private PlacesDao placesDao;
+    private Query<Places> placesQuery;
 
 
     @Override
@@ -78,15 +81,26 @@ public class MainActivity extends AppCompatActivity {
         // eastbbox = 22.94324 + 0.0014;
         DownloadData downloadData = new DownloadData();
         downloadData.execute("https://www.overpass-api.de/api/interpreter?data=[out:json][timeout:25];(node['historic'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + ");way['historic'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + ");relation['historic'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + "););out;%3E;out%20skel%20qt;");
+        DaoSession daoSession =((GreenDao)getApplication()).getDaoSession();
 
+        placesDao =daoSession.getPlacesDao();
+        placesQuery = placesDao.queryBuilder().orderAsc(PlacesDao.Properties.Name).build();
+        final List<Places> places = placesQuery.list();
 
 
         btnvisited =findViewById(R.id.view_db);
         btnvisited.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(places.size()>1){
                 Intent intent = new Intent(MainActivity.this , VisitedActivity.class);
                 startActivity(intent);
+                }
+                else{
+                    Toast toast;
+                    toast= Toast.makeText(MainActivity.this ,"You need to add more places" , Toast.LENGTH_LONG);
+                    toast.show();
+                }
             }
         });
 
