@@ -76,6 +76,7 @@
         style="@style/com_facebook_button"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="30dp"
         android:layout_marginEnd="24dp"
         android:background="@drawable/com_facebook_button_login_background"
@@ -85,6 +86,7 @@
         android:textSize="16sp"
         android:textStyle="italic"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/fragment"
         app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

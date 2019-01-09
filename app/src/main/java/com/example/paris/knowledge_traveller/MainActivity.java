@@ -69,18 +69,24 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this,LoginActivity.class);
             startActivity(intent);
         }
+
+        //for real gps
+        getGpsLocation();
+
         //Ψεύτικα δεδομενα γιατί το gps στην συσκευη μου αργει να ανταποκριθει
+        /*
         double southbbox=40.63157;
         double westbbox = 22.95026;
         double northbbox = 40.63273;
-        double eastbbox = 22.95298;
+        double eastbbox = 22.95298; */
 
         //  southbbox=40.63633-0.0006;
         // westbbox = 22.94324 - 0.0014;
         // northbbox = 40.63633 + 0.0006;
         // eastbbox = 22.94324 + 0.0014;
-        DownloadData downloadData = new DownloadData();
-        downloadData.execute("https://www.overpass-api.de/api/interpreter?data=[out:json][timeout:25];(node['historic'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + ");way['historic'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + ");relation['historic'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + "););out;%3E;out%20skel%20qt;");
+        //DownloadData downloadData = new DownloadData();
+        //downloadData.execute("https://www.overpass-api.de/api/interpreter?data=[out:json][timeout:25];(node['historic'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + ");way['historic'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + ");relation['historic'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + "););out;%3E;out%20skel%20qt;");
+
         DaoSession daoSession =((GreenDao)getApplication()).getDaoSession();
 
         placesDao =daoSession.getPlacesDao();
@@ -104,9 +110,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-        //for real gps
-        // getGpsLocation();
 
 
         emptytxt = findViewById(R.id.txtEmpy);
