@@ -9,7 +9,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class JSONParserWiki {
-    private static final String TAG = "JSONParserWiki";
     private ArrayList<Wiki> wiki;
 
     public JSONParserWiki(){
@@ -43,7 +42,6 @@ public class JSONParserWiki {
 
             PAGE_ID = WArray.getString(0);
 
-            Log.d(TAG, "parse: "+PAGE_ID);
 
             JSONObject wiki_Page = wiki_Query.getJSONObject(WIKI_PAGE);
 
@@ -64,13 +62,10 @@ public class JSONParserWiki {
             w.setWikiText(wikiText);
             w.setImgUrl(wImage);
             wiki.add(w);
-            Log.d(TAG, "parse: " + w.getImgUrl() +"  " + w.getTitle());
-
 
 
 
         } catch (JSONException e) {
-            Log.d(TAG, "parse: ERROR PARSING");
             Wiki empty = new Wiki();
             empty.setWikiText("");
             wiki.add(empty);

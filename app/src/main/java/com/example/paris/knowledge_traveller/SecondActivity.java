@@ -69,7 +69,6 @@ public class SecondActivity extends AppCompatActivity {
         Intent intent = getIntent();
         monument_Name = intent.getStringExtra("name");
         monument_Wiki = intent.getStringExtra("wiki");
-        Log.d("WHAT", "onCreate: "+ monument_Wiki);
         //Δεχομαστε απο τα προηγουμενα Activities το ονομα του μνημειου και την σελιδα της wikipedia Που μας δινει το OSM
 
         addPlace.setOnClickListener(new View.OnClickListener() {
@@ -81,7 +80,6 @@ public class SecondActivity extends AppCompatActivity {
                 boolean flag=true;
                 //Αν υπαρχει ηδη μεσα στην βάση μην το ξαναπροσθεσεις
                 for(int i=0 ;i<places.size();i++) {
-                    Log.d("AAA", "onClick: "+ places.get(i).getName() +" "+ p.getName());
                     if (places.get(i).getName().equals(p.getName())){
                         flag=false;
                     }
@@ -91,7 +89,7 @@ public class SecondActivity extends AppCompatActivity {
                         placesDao.insert(p);
                     }
                     else{
-                        Log.d("AAA", "onClick: Dystuxos uparxei");
+
                         Toast toast;
                         toast = Toast.makeText(SecondActivity.this ,"This Monument is already added !" , Toast.LENGTH_LONG);
                         toast.show();

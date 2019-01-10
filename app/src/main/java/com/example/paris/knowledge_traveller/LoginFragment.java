@@ -18,12 +18,12 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
+import static android.app.Activity.RESULT_OK;
 
 
 public class LoginFragment extends Fragment {
 
     private CallbackManager mCallbackManager;
-    private static final String EMAIL = "email";
 
 
     public LoginFragment() {
@@ -54,7 +54,7 @@ public class LoginFragment extends Fragment {
 
         mCallbackManager = CallbackManager.Factory.create();
 
-        LoginButton mLoginButton = view.findViewById(R.id.login_button);
+        final LoginButton mLoginButton = view.findViewById(R.id.login_button);
 
         // Set the initial permissions to request from the user while logging in
         //αλλα δεν το χρησιμοποιουμαι καπου
@@ -64,32 +64,17 @@ public class LoginFragment extends Fragment {
 
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         final boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
-        mLoginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(isLoggedIn){
-                    LoginManager.getInstance().logOut();
-                    Toast toast;
-                    toast = Toast.makeText(getActivity() ,"If you logout you will not be able to use this app...Please connect again" , Toast.LENGTH_LONG);
-                    toast.show();
-                    Intent intent = new Intent(getActivity(),LoginActivity.class);
-                    startActivity(intent);
-                }
-            }
-        });
-
-        mLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+        if(!isLoggedIn){
+            mLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
                 @Override
                 public void onSuccess(LoginResult loginResult) {
                     // Ο χρηστης εχει συνδεθει επιτυχως
-
-                        Intent intent = new Intent(getActivity(),MainActivity.class);
-                        startActivity(intent);
+                    Intent intent = new Intent(getActivity(),MainActivity.class);
+                    startActivity(intent);
 
 
 
                 }
-
 
                 @Override
                 public void onCancel() {
@@ -101,7 +86,17 @@ public class LoginFragment extends Fragment {
                     // Παρουσιαστηκε καποιο σφαλμα
                 }
             });
-
+        }
+        else{
+            mLoginButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    LoginManager.getInstance().logOut();
+                    Intent intent = new Intent(getActivity(),LoginActivity.class);
+                    startActivity(intent);
+                }
+            });
+        }
 
         return view;
     }

@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
+import com.facebook.FacebookSdk;
 
 import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.query.Query;
@@ -37,8 +38,6 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-
-    private static final String TAG = "MainActivity";
     private final int REQUEST_CODE =123;
     private ArrayList<Places> places;
 
@@ -71,21 +70,21 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //for real gps
-        getGpsLocation();
+       // getGpsLocation();
 
         //Ψεύτικα δεδομενα γιατί το gps στην συσκευη μου αργει να ανταποκριθει
-        /*
+
         double southbbox=40.63157;
         double westbbox = 22.95026;
         double northbbox = 40.63273;
-        double eastbbox = 22.95298; */
+        double eastbbox = 22.95298;
 
         //  southbbox=40.63633-0.0006;
         // westbbox = 22.94324 - 0.0014;
         // northbbox = 40.63633 + 0.0006;
         // eastbbox = 22.94324 + 0.0014;
-        //DownloadData downloadData = new DownloadData();
-        //downloadData.execute("https://www.overpass-api.de/api/interpreter?data=[out:json][timeout:25];(node['historic'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + ");way['historic'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + ");relation['historic'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + "););out;%3E;out%20skel%20qt;");
+        DownloadData downloadData = new DownloadData();
+        downloadData.execute("https://www.overpass-api.de/api/interpreter?data=[out:json][timeout:25];(node['historic'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + ");way['historic'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + ");relation['historic'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + "););out;%3E;out%20skel%20qt;");
 
         DaoSession daoSession =((GreenDao)getApplication()).getDaoSession();
 
@@ -119,6 +118,21 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        //Ελεγχος για να δουμε αν ειναι συνδεδεμενος ηδη ο χρηστης απο προηγουμενη εισοδο στην εφαρμογη
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        final boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
+        Intent intent = new Intent(this,LoginActivity.class);
+        //Αν ειναι ,τοτε να συνδεθει απευθειας στην mainActivity
+        if(!isLoggedIn){
+            startActivity(intent);
+        }
+
+    }
+
 
     public class DownloadData extends AsyncTask<String, Void, String> {
 
@@ -134,15 +148,10 @@ public class MainActivity extends AppCompatActivity {
 
             JSONParserMap parserMap = new JSONParserMap();
 
-                parserMap.parse(jsonData);
-
+            parserMap.parse(jsonData);
 
             places = parserMap.getPosts();
 
-            for (int i = 0; i < places.size(); i++) {
-                Log.d(TAG, places.get(i).toString());
-                Log.d(TAG, "-------------------------------");
-            }
 
             setTheAdapter(places);
 
@@ -153,7 +162,6 @@ public class MainActivity extends AppCompatActivity {
 
             String Data = downloadJSON(strings[0]);
             if (Data == null) {
-                Log.e(TAG, "doInBackground: Error downloading from url " + strings[0]);
             }
             return Data;
         }
@@ -177,9 +185,7 @@ public class MainActivity extends AppCompatActivity {
                 reader.close();
 
             } catch (MalformedURLException e) {
-                Log.e(TAG, "downloadJSON: not correct URL: " + urlPath, e);
             } catch (IOException e) {
-                Log.e(TAG, "downloadJSON: io error ", e);
             }
 
             return sb.toString();
@@ -206,10 +212,9 @@ public class MainActivity extends AppCompatActivity {
                 monument_Name=monument_Name.replaceAll("\\s","_"); // Το μνημειο εχει στο ονομα του κενα
                 //Για να φωναξουμε το api της wikipedia πρεπει να ειναι σε μορφη A_B_C και οχι A B C
 
-                Log.d(TAG, "Name : " + monument_Name);
                 Intent intent = new Intent(MainActivity.this, SecondActivity.class);
                 intent.putExtra("name",monument_Name); //Περναμε στην SecondActivity το ονομα του μνημειου καιτην σελιδα της wikipedia
-                Log.d(TAG, "Wiki : " + Wiki);
+
                 intent.putExtra("wiki" , Wiki);
 
                 startActivity(intent);

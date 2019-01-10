@@ -12,7 +12,6 @@ import java.util.ArrayList;
 
 public class JSONParserMap {
 
-    private static final String TAG = "JSONParserMap";
     private String Wiki ="";
     String Name;
 
@@ -59,7 +58,6 @@ public class JSONParserMap {
                      Θα πρεπει να αφαιρεσουμε τα κενα και να βαλουμε _ */
                 }
                 catch (JSONException e){
-                    Log.d(TAG, "parse: There is no wikidata");
                     Wiki ="";
 
                 }
@@ -74,7 +72,6 @@ public class JSONParserMap {
 
         }
         catch (JSONException e){
-            Log.d(TAG, "parse: error");
         }
 
         return true;

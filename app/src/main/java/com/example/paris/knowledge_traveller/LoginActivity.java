@@ -7,6 +7,8 @@ import android.content.pm.Signature;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -27,7 +29,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 public class LoginActivity extends AppCompatActivity {
-
+        private Button btn;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,14 +37,28 @@ public class LoginActivity extends AppCompatActivity {
         //Ελεγχος για να δουμε αν ειναι συνδεδεμενος ηδη ο χρηστης απο προηγουμενη εισοδο στην εφαρμογη
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         final boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
+        Intent intent = new Intent(this,MainActivity.class);
         //Αν ειναι ,τοτε να συνδεθει απευθειας στην mainActivity
         if(isLoggedIn){
-            Intent intent = new Intent(this,MainActivity.class);
             startActivity(intent);
         }
 
     }
 
+    @Override
+    public void onResume()
+    {
+        super.onResume();
 
+        //Ελεγχος για να δουμε αν ειναι συνδεδεμενος ηδη ο χρηστης απο προηγουμενη εισοδο στην εφαρμογη
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        final boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
+        Intent intent = new Intent(this,MainActivity.class);
+        //Αν ειναι ,τοτε να συνδεθει απευθειας στην mainActivity
+        if(isLoggedIn){
+            startActivity(intent);
+        }
+
+    }
 
 }

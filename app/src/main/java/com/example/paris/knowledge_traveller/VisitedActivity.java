@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 
@@ -67,6 +68,19 @@ public class VisitedActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        ListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                Places place = placesQuery.list().get(position);
+                Long Id = place.getId();
+                placesDao.deleteByKey(Id);
+                Toast toast;
+                toast = Toast.makeText(VisitedActivity.this ,"You just delete " + place.getName() , Toast.LENGTH_LONG);
+                toast.show();
+                return false;
+            }
+        });
+
     }
 
 
