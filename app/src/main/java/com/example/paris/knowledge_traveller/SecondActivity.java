@@ -7,13 +7,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
 
-import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.query.Query;
 
 import java.io.BufferedReader;
@@ -130,11 +128,6 @@ public class SecondActivity extends AppCompatActivity {
                 else{
                      wikiTxtLink2.setVisibility(View.GONE);
                      }
-                // new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).
-                //  execute("http://java.sogeti.nl/JavaBlog/wp-content/uploads/2009/04/android_icon_256.png");
-
-                //new DownloadImageTask((ImageView) findViewById(R.id.imageView1))
-                // .execute("https://en.wikipedia.org/wiki/"+monument_Name+"#/media/"+wikiText.get(0).getImgUrl());
 
             }
             else{

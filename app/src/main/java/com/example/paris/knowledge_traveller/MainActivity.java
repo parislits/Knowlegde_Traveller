@@ -22,9 +22,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
-import com.facebook.FacebookSdk;
-
-import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.query.Query;
 
 import java.io.BufferedReader;
@@ -72,19 +69,47 @@ public class MainActivity extends AppCompatActivity {
         //for real gps
        // getGpsLocation();
 
-        //Ψεύτικα δεδομενα γιατί το gps στην συσκευη μου αργει να ανταποκριθει
 
+        //Ψεύτικα δεδομενα γιατί το gps στην συσκευη μου αργει να ανταποκριθει
+        //Kamara
         double southbbox=40.63157;
         double westbbox = 22.95026;
         double northbbox = 40.63273;
         double eastbbox = 22.95298;
 
-        //  southbbox=40.63633-0.0006;
-        // westbbox = 22.94324 - 0.0014;
-        // northbbox = 40.63633 + 0.0006;
-        // eastbbox = 22.94324 + 0.0014;
+        //Aristotelous
+         //southbbox=40.63633-0.0006;
+         //westbbox = 22.94324 - 0.0014;
+         //northbbox = 40.63633 + 0.0006;
+         //eastbbox = 22.94324 + 0.0014;
+
+        //leukos
+          //southbbox=40.62633-0.0006;
+         //westbbox = 22.94828 - 0.0014;
+         //northbbox = 40.62633 + 0.0006;
+         //eastbbox = 22.94828 + 0.0014;
+
+        //tipota
+          //southbbox=40.64501-0.0006;
+         //westbbox = 22.94906 - 0.0014;
+         //northbbox = 40.64501 + 0.0006;
+         //eastbbox = 22.94906 + 0.0014;
+
+        //BIG BEN
+          //southbbox=51.50032-0.0006;
+         //westbbox = -0.126062 - 0.0014;
+         //northbbox = 51.50032 + 0.0006;
+         //eastbbox = -0.126062 + 0.0014;
+
         DownloadData downloadData = new DownloadData();
-        downloadData.execute("https://www.overpass-api.de/api/interpreter?data=[out:json][timeout:25];(node['historic'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + ");way['historic'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + ");relation['historic'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + "););out;%3E;out%20skel%20qt;");
+        downloadData.execute("https://www.overpass-api.de/api/interpreter?data=[out:json][timeout:25];(" +
+                "node['tourism'='museum']['name'](" + southbbox +"," + westbbox + "," + northbbox + "," + eastbbox + ");"+
+                "way['tourism'='museum']['name'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + ");"+
+                "relation['tourism'='museum']['name'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + ");"+
+                "node['historic']['name'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + ");" +
+                "way['historic']['name'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + ");" +
+                "relation['historic']['name'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + ");)" +
+                ";out;%3E;out%20skel%20qt;");
 
         DaoSession daoSession =((GreenDao)getApplication()).getDaoSession();
 
@@ -145,12 +170,17 @@ public class MainActivity extends AppCompatActivity {
             //Τα εξαφανιζουμε μολις τα δεδομενα φτασουν στην onPost
             waittxt.setVisibility(View.GONE);
             progressBar.setVisibility(View.GONE);
-
+            Log.d("mpike", "onPostExecute parameter is " + jsonData );
             JSONParserMap parserMap = new JSONParserMap();
 
             parserMap.parse(jsonData);
 
             places = parserMap.getPosts();
+
+            for(int i =0; i<places.size(); i++){
+                Log.d("mpike", places.get(i).toString());
+                Log.d("mpike" ,"-------------------------------");
+            }
 
 
             setTheAdapter(places);
@@ -284,8 +314,14 @@ public class MainActivity extends AppCompatActivity {
 
                 //Εκτελουμε την ασυγχρονη μεθοδο που θα μας επιστρεψει το Json με τα μνημεια της περιοχης του bbox
                 DownloadData downloadData = new DownloadData();
-                downloadData.execute("https://www.overpass-api.de/api/interpreter?data=[out:json][timeout:25];(node['historic'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + ");way['historic'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + ");relation['historic'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + "););out;%3E;out%20skel%20qt;");
-
+                downloadData.execute("https://www.overpass-api.de/api/interpreter?data=[out:json][timeout:25];(" +
+                        "node['tourism'='museum']['name'](" + southbbox +"," + westbbox + "," + northbbox + "," + eastbbox + ");"+
+                        "way['tourism'='museum']['name'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + ");"+
+                        "relation['tourism'='museum']['name'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + ");"+
+                        "node['historic']['name'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + ");" +
+                        "way['historic']['name'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + ");" +
+                        "relation['historic']['name'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + ");)" +
+                        ";out;%3E;out%20skel%20qt;");
 
             }
 
