@@ -1,4 +1,4 @@
-package com.example.paris.knowledge_traveller;
+﻿package com.example.paris.knowledge_traveller;
 
 import android.Manifest;
 import android.content.Context;
@@ -67,9 +67,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //for real gps
-       // getGpsLocation();
+       getGpsLocation();
 
-
+/*
         //Ψεύτικα δεδομενα γιατί το gps στην συσκευη μου αργει να ανταποκριθει
         //Kamara
         double southbbox=40.63157;
@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
                 "way['historic']['name'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + ");" +
                 "relation['historic']['name'](" + southbbox + "," + westbbox + "," + northbbox + "," + eastbbox + ");)" +
                 ";out;%3E;out%20skel%20qt;");
-
+*/
         DaoSession daoSession =((GreenDao)getApplication()).getDaoSession();
 
         placesDao =daoSession.getPlacesDao();
