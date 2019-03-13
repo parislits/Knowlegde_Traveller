@@ -43,13 +43,7 @@ public class SecondActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
         //Επειδη το κουμπι της συνδεσης στο facebook ειναι σε ολα τα activities ελεγχουμε μηπως εχει αποσυνδεθει σε καποιο προηγουμενο activity
-        AccessToken accessToken = AccessToken.getCurrentAccessToken();
-        final boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
-        if(!isLoggedIn){
-            //και τον στελνουμε πισω στην αρχικη οθόνη
-            Intent intent = new Intent(this,LoginActivity.class);
-            startActivity(intent);
-        }
+
 
         DaoSession daoSession =((GreenDao)getApplication()).getDaoSession();
 

@@ -1,4 +1,4 @@
-﻿package com.example.paris.knowledge_traveller;
+package com.example.paris.knowledge_traveller;
 
 import android.Manifest;
 import android.content.Context;
@@ -55,19 +55,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main2);
 
-//Επειδη το κουμπι της συνδεσης στο facebook ειναι σε ολα τα activities ελεγχουμε μηπως εχει αποσυνδεθει σε καποιο προηγουμενο activity
-        AccessToken accessToken = AccessToken.getCurrentAccessToken();
-        final boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
-        if(!isLoggedIn){
-            //και τον στελνουμε πισω στην αρχικη οθόνη
-            Intent intent = new Intent(this,LoginActivity.class);
-            startActivity(intent);
-        }
+
 
         //for real gps
-       getGpsLocation();
+        getGpsLocation();
 
 /*
         //Ψεύτικα δεδομενα γιατί το gps στην συσκευη μου αργει να ανταποκριθει
@@ -123,8 +116,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(places.size()>1){
-                Intent intent = new Intent(MainActivity.this , VisitedActivity.class);
-                startActivity(intent);
+                    Intent intent = new Intent(MainActivity.this , VisitedActivity.class);
+                    startActivity(intent);
                 }
                 else{
                     Toast toast;
@@ -143,20 +136,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    public void onResume()
-    {
-        super.onResume();
-        //Ελεγχος για να δουμε αν ειναι συνδεδεμενος ηδη ο χρηστης απο προηγουμενη εισοδο στην εφαρμογη
-        AccessToken accessToken = AccessToken.getCurrentAccessToken();
-        final boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
-        Intent intent = new Intent(this,LoginActivity.class);
-        //Αν ειναι ,τοτε να συνδεθει απευθειας στην mainActivity
-        if(!isLoggedIn){
-            startActivity(intent);
-        }
 
-    }
 
 
     public class DownloadData extends AsyncTask<String, Void, String> {
@@ -300,14 +280,14 @@ public class MainActivity extends AppCompatActivity {
                 double eastbbox = Double.parseDouble(longbbox) + 0.0014;
 
                 // southbbox=40.63157;
-               //  westbbox = 22.95026;
+                //  westbbox = 22.95026;
                 // northbbox = 40.63273;
                 // eastbbox = 22.95298;
 
-              //  southbbox=40.63633-0.0006;
-               // westbbox = 22.94324 - 0.0014;
-               // northbbox = 40.63633 + 0.0006;
-               // eastbbox = 22.94324 + 0.0014;
+                //  southbbox=40.63633-0.0006;
+                // westbbox = 22.94324 - 0.0014;
+                // northbbox = 40.63633 + 0.0006;
+                // eastbbox = 22.94324 + 0.0014;
 
                 Log.d("MyGPS", "onLocationChanged: "+ latbbox +" "+longbbox);
                 Log.d("MyGPS", "onLocationChanged: " +southbbox + " " +westbbox + " " +northbbox+ " " +eastbbox );

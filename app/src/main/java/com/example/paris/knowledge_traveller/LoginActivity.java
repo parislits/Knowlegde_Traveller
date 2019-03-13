@@ -18,9 +18,9 @@ public class LoginActivity extends AppCompatActivity {
         final boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
         Intent intent = new Intent(this,MainActivity.class);
         //Αν ειναι ,τοτε να συνδεθει απευθειας στην mainActivity
-        if(isLoggedIn){
+
             startActivity(intent);
-        }
+
 
     }
 
@@ -34,9 +34,9 @@ public class LoginActivity extends AppCompatActivity {
         final boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
         Intent intent = new Intent(this,MainActivity.class);
         //Αν ειναι ,τοτε να συνδεθει απευθειας στην mainActivity
-        if(isLoggedIn){
+
             startActivity(intent);
-        }
+
 
     }
 

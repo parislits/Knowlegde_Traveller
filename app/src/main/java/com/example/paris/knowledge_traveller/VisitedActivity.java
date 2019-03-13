@@ -25,14 +25,7 @@ public class VisitedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_visited);
 
-        //Ελεγχος για να δουμε αν ειναι συνδεδεμενος ηδη ο χρηστης απο προηγουμενη εισοδο στην εφαρμογη
-        AccessToken accessToken = AccessToken.getCurrentAccessToken();
-        final boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
-        //Αν ειναι ,τοτε να συνδεθει απευθειας στην mainActivity
-        if(!isLoggedIn){
-            Intent intent = new Intent(this,LoginActivity.class);
-            startActivity(intent);
-        }
+
 
         DaoSession daoSession =((GreenDao)getApplication()).getDaoSession();
 
